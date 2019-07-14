@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        header {
+            height: 100px;
+            background-color: yellow;
+        }
+
+        nav {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        nav>ul {
+            display: flex;
+            /* 多了前后的两张 */
+            width: 800%;
+            /* 动画不能一开始就加，如果一开始就加了，会导致我们第一次的切换也是以动画的形式进行的 */
+            /* transition:transform 1s; */
+        }
+
+        li {
+            flex: 1;
+        }
+
+        li img {
+            width: 100%;
+            vertical-align: middle;
+        }
+
+        main {
+            height: 500px;
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        页面的头部
+    </header>
+    <nav>
+        <!-- li*6>a[#]>img[src=./images/$.jpg] -->
+        <!-- 为了实现无缝滚动，把图片列表前后加上1张，前后多了一张，要记得把ul的宽度改成 800% -->
+        <ul>
+            <li><a href="#"><img src="./images/6.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/1.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/2.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/3.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/4.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/5.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/6.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/1.jpg" alt=""></a></li>
+        </ul>
+    </nav>
+    <main>
+        其他布局
+    </main>
+</body>
+<script src="./zepto.js"></script>
+<script src="./touch.js"></script>
+<script>
+    let ul = $("nav >ul");
+    let imgWidth = $('nav').width();
+
+    let flag = 1;
+    let target = flag * imgWidth * -1;
+    ul.css('transform', 'translate(' + target + 'px)');
+    setTimeout(() => {
+        //给ul添加过度动画
+        ul.css('transition', 'transform 600ms');
+    }, 10);
+
+    ul.on('swipeLeft', function () {
+        flag++;
+        let target = flag * imgWidth * -1;
+        ul.css('transform', 'translate(' + target + 'px)');
+    });
+    ul.on('swipeRight', function () {
+        flag--;
+        let target = flag * imgWidth * -1;
+        ul.css('transform', 'translate(' + target + 'px)');
+
+    });
+    ul[0].addEventListener('transitionend', function () {
+        // 如果当前已经是最后一张(用户认为的第一张)，我们立刻把图片切换到实际上用户认为第一张
+        // console.log(12);
+        if (flag === ul[0].children.length - 1 || flag == 0) {
+            if (flag ===ul[0].children.length - 1) {
+                flag = 1;
+            } else if (flag == 0) {
+                flag = ul[0].children.length - 2;
+            }
+            let target = flag * imgWidth * -1;
+            ul[0].style.transition = '';
+            ul.css('transform', 'translate(' + target + 'px)');
+            setTimeout(() => {
+                ul.css('transition', 'transform 600ms');
+            }, 10);
+        }
+    });
+</script>
+
+</html>
